@@ -1,12 +1,12 @@
-import { part1, part2 } from "../4"
+import { part1, part2 } from "../2"
 import { describe, it, expect } from "vitest"
 
 describe("test", () => {
   it("runs part1", () => {
-    expect(part1()).toEqual(2496)
+    expect(part1()).toEqual(321)
   })
 
   it("runs part2", () => {
-    expect(part2()).toEqual(1967)
+    expect(part2()).toEqual(386)
   })
 })
