@@ -1,6 +1,13 @@
 export type Coord = { x: number; y: number }
 export type Direction = "N" | "E" | "S" | "W"
 
+export const OPPPOSITE_DIRECTION = {
+  N: "S" as Direction,
+  S: "N" as Direction,
+  E: "W" as Direction,
+  W: "E" as Direction,
+}
+
 export class GridMap {
   width: number
   height: number
@@ -40,9 +47,15 @@ export class GridMap {
     this.startingDirection = startingDirection
   }
 
-  reset() {
-    this.position = { ...this.startingPosition }
-    this.direction = this.startingDirection
+  reset({
+    startingPosition,
+    startingDirection,
+  }: {
+    startingPosition: Coord
+    startingDirection: Direction
+  }) {
+    this.position = { ...startingPosition }
+    this.direction = startingDirection
     this.positionsVisited = {
       [`${this.startingPosition.x},${this.startingPosition.y}`]: [
         this.startingDirection,
@@ -51,58 +64,40 @@ export class GridMap {
   }
 
   move() {
-    if (this.direction === "N") return this.moveNorth()
-    else if (this.direction === "S") return this.moveSouth()
-    else if (this.direction === "E") return this.moveEast()
-    else if (this.direction === "W") return this.moveWest()
-  }
+    const direction = this.direction
+    const { x, y } = this.position
+    let newX = x,
+      newY = y
 
-  moveNorth() {
-    if (!this.validateMovement({ x: this.position.x, y: this.position.y - 1 }))
+    switch (direction) {
+      case "N":
+        newY--
+        break
+      case "S":
+        newY++
+        break
+      case "E":
+        newX++
+        break
+      case "W":
+        newX--
+        break
+    }
+
+    if (!this.validateMovement({ x: newX, y: newY })) {
+      // console.log(`turning ${direction}`, this.position);
       return
-    if (this.position.y === 0)
+    }
+
+    if (newX < 0 || newX >= this.width || newY < 0 || newY >= this.height) {
       return this.onOutOfBoundsCallbacks.forEach((cb) => cb(this))
+    }
 
-    this.position.y--
-    this.positionsVisited[`${this.position.x},${this.position.y}`] ||= []
+    this.position = { x: newX, y: newY }
     this.handleRepeatedAction()
-    this.positionsVisited[`${this.position.x},${this.position.y}`].push("N")
-  }
-
-  moveSouth() {
-    if (!this.validateMovement({ x: this.position.x, y: this.position.y + 1 }))
-      return
-    if (this.position.y === this.height - 1)
-      return this.onOutOfBoundsCallbacks.forEach((cb) => cb(this))
-
-    this.position.y++
-    this.positionsVisited[`${this.position.x},${this.position.y}`] ||= []
-    this.handleRepeatedAction()
-    this.positionsVisited[`${this.position.x},${this.position.y}`].push("S")
-  }
-
-  moveEast() {
-    if (!this.validateMovement({ x: this.position.x + 1, y: this.position.y }))
-      return
-    if (this.position.x === this.width - 1)
-      return this.onOutOfBoundsCallbacks.forEach((cb) => cb(this))
-
-    this.position.x++
-    this.positionsVisited[`${this.position.x},${this.position.y}`] ||= []
-    this.handleRepeatedAction()
-    this.positionsVisited[`${this.position.x},${this.position.y}`].push("E")
-  }
-
-  moveWest() {
-    if (!this.validateMovement({ x: this.position.x - 1, y: this.position.y }))
-      return
-    if (this.position.x === 0)
-      return this.onOutOfBoundsCallbacks.forEach((cb) => cb(this))
-
-    this.position.x--
-    this.positionsVisited[`${this.position.x},${this.position.y}`] ||= []
-    this.handleRepeatedAction()
-    this.positionsVisited[`${this.position.x},${this.position.y}`].push("W")
+    const positionKey = `${newX},${newY}`
+    this.positionsVisited[positionKey] ||= []
+    this.positionsVisited[positionKey].push(direction)
   }
 
   validateMovement(moveTo: Coord) {
@@ -115,7 +110,7 @@ export class GridMap {
 
   handleRepeatedAction() {
     const currentStep = `${this.position.x},${this.position.y}`
-    if (this.positionsVisited[currentStep].includes(this.direction)) {
+    if (this.positionsVisited[currentStep]?.includes(this.direction)) {
       this.onRepeatedActionCallbacks.forEach((cb) => cb(this))
       return true
     }
