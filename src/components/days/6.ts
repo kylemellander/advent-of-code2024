@@ -1,183 +1,237 @@
 import input from "../inputs/6.txt?raw"
-import { Coord, Direction, GridMap, OPPPOSITE_DIRECTION } from "./GridMap"
 
 export function part1(data = input) {
-  const gridMap = generateGridMap(data)
-  gridMap.moveUntilOutOfBounds()
-  return Object.keys(gridMap.positionsVisited).length
+  const { positionsVisited } = part1DataPoints(data)
+  return Object.keys(positionsVisited).length
+}
+
+type Coord = { x: number; y: number }
+
+function part1DataPoints(data: string) {
+  let position: Coord = { x: 0, y: 0 }
+  let startingPosition = ""
+  const positionsVisited = {} as Record<string, string[]>
+  let dir = "N"
+  let upperX = 0
+  let upperY = 0
+
+  const obstacles = data
+    .split("\n")
+    .map((n) => n.trim())
+    .filter(Boolean)
+    .reduce((acc, line, y) => {
+      upperY = Math.max(upperY, y)
+      const obstacles = line.split("").reduce((ac, value, x) => {
+        upperX = Math.max(upperX, x)
+        if (value === "#") return [...ac, { x, y }]
+        if (value === "^") {
+          position = { x, y }
+          startingPosition = `${x},${y}`
+          positionsVisited[`${x},${y}`] = ["N"]
+        }
+        return ac
+      }, [] as Coord[])
+      return [...acc, ...obstacles]
+    }, [] as Coord[])
+
+  while (true) {
+    if (dir === "N") {
+      const moveTo = obstacles
+        .filter(({ x, y }) => {
+          return x === position.x && y < position.y
+        })
+        .reduce((acc, { y }) => {
+          if (acc === undefined) return y
+          if (acc < y) return y
+          return acc
+        }, undefined as number | undefined)
+      const destination = moveTo === undefined ? 0 : moveTo + 1
+      for (let i = position.y - 1; i >= destination; i--) {
+        positionsVisited[`${position.x},${i}`] ||= []
+        positionsVisited[`${position.x},${i}`].push("N")
+      }
+      if (moveTo == undefined) break
+      dir = NEXT_DIRECTION[dir]
+      position.y = destination
+    } else if (dir === "S") {
+      const moveTo = obstacles
+        .filter(({ x, y }) => {
+          return x === position.x && y > position.y
+        })
+        .reduce((acc, { y }) => {
+          if (acc === undefined) return y
+          if (acc > y) return y
+          return acc
+        }, undefined as number | undefined)
+      const destination = moveTo === undefined ? upperY : moveTo - 1
+
+      for (let i = position.y + 1; i <= destination; i++) {
+        positionsVisited[`${position.x},${i}`] ||= []
+        positionsVisited[`${position.x},${i}`].push("S")
+      }
+      if (moveTo == undefined) break
+      dir = NEXT_DIRECTION[dir]
+      position.y = destination
+    } else if (dir === "E") {
+      const moveTo = obstacles
+        .filter(({ x, y }) => {
+          return y === position.y && x > position.x
+        })
+        .reduce((acc, { x }) => {
+          if (acc === undefined) return x
+          if (acc > x) return x
+          return acc
+        }, undefined as number | undefined)
+      const destination = moveTo === undefined ? upperX : moveTo - 1
+      for (let i = position.x + 1; i <= destination; i++) {
+        positionsVisited[`${i},${position.y}`] ||= []
+        positionsVisited[`${i},${position.y}`].push("E")
+      }
+      if (moveTo == undefined) break
+      dir = NEXT_DIRECTION[dir]
+      position.x = destination
+    } else if (dir === "W") {
+      const moveTo = obstacles
+        .filter(({ x, y }) => {
+          return y === position.y && x < position.x
+        })
+        .reduce((acc, { x }) => {
+          if (acc === undefined) return x
+          if (acc < x) return x
+          return acc
+        }, undefined as number | undefined)
+      const destination = moveTo === undefined ? 0 : moveTo + 1
+      for (let i = position.x - 1; i >= destination; i--) {
+        positionsVisited[`${i},${position.y}`] ||= []
+        positionsVisited[`${i},${position.y}`].push("W")
+      }
+      if (moveTo == undefined) break
+      dir = NEXT_DIRECTION[dir]
+      position.x = moveTo + 1
+    }
+  }
+  return { startingPosition, positionsVisited, upperX, upperY, obstacles }
 }
 
 const NEXT_DIRECTION = {
-  N: "E" as Direction,
-  E: "S" as Direction,
-  S: "W" as Direction,
-  W: "N" as Direction,
+  N: "E",
+  E: "S",
+  S: "W",
+  W: "N",
 }
 
 export function part2(data = input) {
-  const gridMap = generateGridMap(data)
-  const startingPosition = `${gridMap.startingPosition.x},${gridMap.startingPosition.y}`
-  gridMap.moveUntilOutOfBounds()
-  const originalRawObstacles = gridMap.rawObstacles.slice()
-  const originalPositionsVisited = { ...gridMap.positionsVisited }
-  let longestTime = 0
-  const start = performance.now()
+  const { startingPosition, positionsVisited, upperX, upperY, obstacles } =
+    part1DataPoints(data)
 
-  const potentialNewObstacles = []
-  const keys = Object.keys(originalPositionsVisited)
-  for (let i = 0; i < keys.length; i++) {
-    const rawCoord = keys[i]
-    if (rawCoord === startingPosition) continue
-    const start = performance.now()
-    gridMap.rawObstacles = [...originalRawObstacles, rawCoord]
-    const firstPassDir = originalPositionsVisited[rawCoord][0] as Direction
-    const [oX, oY] = rawCoord.split(",").map(Number)
-    const { x, y } = move1({ x: oX, y: oY }, OPPPOSITE_DIRECTION[firstPassDir])
-    const result = gridMap.isLoop({ x, y, direction: firstPassDir })
-    const elapsed = performance.now() - start
-
-    if (elapsed > longestTime) {
-      longestTime = elapsed
-      console.log("Longest time: ", longestTime, rawCoord, result, i)
-    } else if (elapsed > 20) {
-      console.log("Long time: ", elapsed, rawCoord, result, i)
+  const potentialNewObstacles = Object.keys(positionsVisited).filter(
+    (rawCoord) => {
+      const [x, y] = rawCoord.split(",").map(Number)
+      return hasInfiniteLoop({
+        startingPosition,
+        obstacles: [...obstacles, { x, y }],
+        upperX,
+        upperY,
+      })
     }
-
-    if (result) potentialNewObstacles.push(rawCoord)
-  }
-
-  console.log(
-    "Avg time: ",
-    (performance.now() - start) / potentialNewObstacles.length
   )
 
   return potentialNewObstacles.length
 }
 
-class GridMapWithObstacles extends GridMap {
-  rawObstacles: string[]
-
-  constructor({
-    width,
-    height,
-    startingPosition,
-    startingDirection,
-    obstacles,
-  }: {
-    width: number
-    height: number
-    startingPosition: Coord
-    startingDirection: Direction
-    obstacles: Coord[]
-  }) {
-    super({
-      width,
-      height,
-      startingPosition,
-      startingDirection,
-    })
-    this.rawObstacles = obstacles.map(({ x, y }) => `${x},${y}`)
-    this.movementValidations.push(
-      ({ x, y }) => !this.rawObstacles.includes(`${x},${y}`)
-    )
-    this.onBlockedCallbacks.push(() => {
-      this.direction = NEXT_DIRECTION[this.direction]
-    })
-  }
-
-  moveUntilOutOfBounds() {
-    let hasReachedOutOfBounds = false
-    const outOfBoundsCallback = () => {
-      hasReachedOutOfBounds = true
-    }
-    this.onOutOfBoundsCallbacks.push(outOfBoundsCallback)
-    while (!hasReachedOutOfBounds) this.move()
-    this.onOutOfBoundsCallbacks = this.onOutOfBoundsCallbacks.filter(
-      (cb) => cb !== outOfBoundsCallback
-    )
-  }
-
-  isLoop({
-    x = this.startingPosition.x,
-    y = this.startingPosition.y,
-    direction = this.startingDirection,
-  }: { x?: number; y?: number; direction?: Direction } = {}) {
-    this.reset({ startingPosition: { x, y }, startingDirection: direction })
-    let outOfBounds = false
-    let inLoop = false
-    const repeatedActionCallback = () => (inLoop = true)
-    const outOfBoundsCallback = () => (outOfBounds = true)
-    this.onRepeatedActionCallbacks.push(repeatedActionCallback)
-    this.onOutOfBoundsCallbacks.push(outOfBoundsCallback)
-    while (!outOfBounds && !inLoop) this.move()
-    this.onRepeatedActionCallbacks = this.onRepeatedActionCallbacks.filter(
-      (cb) => cb !== repeatedActionCallback
-    )
-    this.onOutOfBoundsCallbacks = this.onOutOfBoundsCallbacks.filter(
-      (cb) => cb !== outOfBoundsCallback
-    )
-    return inLoop
-  }
-}
-
-function generateGridMap(data: string) {
-  const {
-    data: gridData,
-    height,
-    width,
-  } = buildGridMapData({
-    data,
-    outputData: { obstacles: [] as Coord[], startingPosition: { x: 0, y: 0 } },
-
-    onChar: ({ char, x, y, data }) => {
-      if (char === "#") data.obstacles.push({ x, y })
-      else if (char === "^") data.startingPosition = { x, y }
-    },
-  })
-  return new GridMapWithObstacles({
-    width,
-    height,
-    startingPosition: gridData.startingPosition,
-    startingDirection: "N",
-    obstacles: gridData.obstacles,
-  })
-}
-
-function buildGridMapData<D>({
-  data,
-  onChar,
-  outputData,
+function hasInfiniteLoop({
+  startingPosition,
+  obstacles,
+  upperX,
+  upperY,
 }: {
-  data: string
-  outputData: D
-  onChar: (data: { char: string; x: number; y: number; data: D }) => void
+  startingPosition: string
+  obstacles: Coord[]
+  upperX: number
+  upperY: number
 }) {
-  const points = data
-    .split("\n")
-    .map((line) => line.trim())
-    .filter(Boolean)
-  const height = points.length
-  const width = points[0].length
-  for (let y = 0; y < height; y++) {
-    const line = points[y]
-    for (let x = 0; x < width; x++) {
-      onChar({ char: line[x], x, y, data: outputData })
-    }
-  }
-  return { data: outputData, height, width }
-}
+  const positionsVisited = {} as Record<string, string[]>
+  let [positionX, positionY] = startingPosition.split(",").map(Number)
+  let dir = "N"
 
-function move1(coord: Coord, direction: Direction) {
-  switch (direction) {
-    case "N":
-      return { x: coord.x, y: coord.y - 1 }
-    case "S":
-      return { x: coord.x, y: coord.y + 1 }
-    case "E":
-      return { x: coord.x + 1, y: coord.y }
-    case "W":
-      return { x: coord.x - 1, y: coord.y }
-    default:
-      return coord
+  while (true) {
+    if (dir === "N") {
+      const moveTo = obstacles
+        .filter(({ x, y }) => {
+          return x === positionX && y < positionY
+        })
+        .reduce((acc, { y }) => {
+          if (acc === undefined) return y
+          if (acc < y) return y
+          return acc
+        }, undefined as number | undefined)
+      const destination = moveTo === undefined ? 0 : moveTo + 1
+      for (let i = positionY - 1; i >= destination; i--) {
+        positionsVisited[`${positionX},${i}`] ||= []
+        if (positionsVisited[`${positionX},${i}`].includes("N")) return true
+        positionsVisited[`${positionX},${i}`].push("N")
+      }
+      if (moveTo == undefined) break
+      dir = NEXT_DIRECTION[dir]
+      positionY = destination
+    } else if (dir === "S") {
+      const moveTo = obstacles
+        .filter(({ x, y }) => {
+          return x === positionX && y > positionY
+        })
+        .reduce((acc, { y }) => {
+          if (acc === undefined) return y
+          if (acc > y) return y
+          return acc
+        }, undefined as number | undefined)
+      const destination = moveTo === undefined ? upperY : moveTo - 1
+
+      for (let i = positionY + 1; i <= destination; i++) {
+        positionsVisited[`${positionX},${i}`] ||= []
+        if (positionsVisited[`${positionX},${i}`].includes("S")) return true
+        positionsVisited[`${positionX},${i}`].push("S")
+      }
+      if (moveTo == undefined) break
+      dir = NEXT_DIRECTION[dir]
+      positionY = destination
+    } else if (dir === "E") {
+      const moveTo = obstacles
+        .filter(({ x, y }) => {
+          return y === positionY && x > positionX
+        })
+        .reduce((acc, { x }) => {
+          if (acc === undefined) return x
+          if (acc > x) return x
+          return acc
+        }, undefined as number | undefined)
+      const destination = moveTo === undefined ? upperX : moveTo - 1
+      for (let i = positionX + 1; i <= destination; i++) {
+        positionsVisited[`${i},${positionY}`] ||= []
+        if (positionsVisited[`${i},${positionY}`].includes("E")) return true
+        positionsVisited[`${i},${positionY}`].push("E")
+      }
+      if (moveTo == undefined) break
+      dir = NEXT_DIRECTION[dir]
+      positionX = destination
+    } else if (dir === "W") {
+      const moveTo = obstacles
+        .filter(({ x, y }) => {
+          return y === positionY && x < positionX
+        })
+        .reduce((acc, { x }) => {
+          if (acc === undefined) return x
+          if (acc < x) return x
+          return acc
+        }, undefined as number | undefined)
+      const destination = moveTo === undefined ? 0 : moveTo + 1
+      for (let i = positionX - 1; i >= destination; i--) {
+        positionsVisited[`${i},${positionY}`] ||= []
+        if (positionsVisited[`${i},${positionY}`].includes("W")) return true
+        positionsVisited[`${i},${positionY}`].push("W")
+      }
+      if (moveTo == undefined) break
+      dir = NEXT_DIRECTION[dir]
+      positionX = moveTo + 1
+    }
   }
 }
