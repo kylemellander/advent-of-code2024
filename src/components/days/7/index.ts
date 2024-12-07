@@ -1,19 +1,28 @@
 import input from "./input.txt?raw"
 
 type Equation = { result: number; numbers: number[] }
-type Operator = (a: number, b: number) => number
+type Operator = (a: number, b: number, isLast: boolean) => number
+
+/*
+In order to optimize the solution, instead of doing the math forward, which
+creates many different possibilities, increasing the amount of calculations
+done in our n+3 nested loops.
+
+If we start with the result and find out if it is not divisible/splitable
+into the numbers, then we can eliminate many possibilities.
+*/
 
 export function part1(data = input) {
   const equations = buildEquations(data)
-  const allowedOperators = [add, multiply]
-  const validEquations = findValidEquations(equations, allowedOperators)
+  const allowedOperators = [addReversed, multiplyReversed]
+  const validEquations = findValidEquationsReversed(equations, allowedOperators)
   return scoreEquations(validEquations)
 }
 
 export function part2(data = input) {
   const equations = buildEquations(data)
-  const allowedOperators = [add, multiply, concat]
-  const validEquations = findValidEquations(equations, allowedOperators)
+  const allowedOperators = [addReversed, multiplyReversed, concatReversed]
+  const validEquations = findValidEquationsReversed(equations, allowedOperators)
   return scoreEquations(validEquations)
 }
 
@@ -30,25 +39,29 @@ function buildEquations(data: string) {
   })
 }
 
-function findValidEquations(
+function findValidEquationsReversed(
   equations: Equation[],
   allowedOperators: Operator[]
 ) {
   return equations.filter(({ result, numbers }) => {
-    let previousValues = [1]
-    for (let i = 0; i < numbers.length; i++) {
+    let values = [result]
+    for (let i = numbers.length - 1; i >= 0; i--) {
       const number = numbers[i]
       const newValues: number[] = []
-      for (const previousValue of previousValues) {
+      for (const value of values) {
         for (const operator of allowedOperators) {
-          const newValue = operator(previousValue, number)
-          if (newValue <= result) newValues.push(newValue)
+          try {
+            const newValue = operator(value, number, i === 0)
+            newValues.push(newValue)
+          } catch {
+            // Ignore errors
+          }
         }
       }
-      previousValues = newValues
+      values = newValues
     }
 
-    return previousValues.includes(result)
+    return values.length > 0
   })
 }
 
@@ -58,23 +71,29 @@ function scoreEquations(equations: Equation[]) {
   return score
 }
 
-function add(a: number, b: number) {
-  return a + b
+function addReversed(a: number, b: number, isLast: boolean) {
+  const result = a - b
+  if (result < 0) throw new Error("Would be too large")
+  if (isLast && result !== 0) throw new Error("Not zero")
+  return result
 }
 
-function multiply(a: number, b: number) {
-  return a * b
+function multiplyReversed(a: number, b: number, isLast: boolean) {
+  if (isLast && a !== b) throw new Error("Not down to one")
+  if (a % b !== 0) throw new Error("Not a multiple")
+
+  return a / b
 }
 
-function concat(a: number, b: number) {
-  const aMult = roundUpToPowerOfTen(b)
-  return a * aMult + b
+function concatReversed(a: number, b: number, isLast: boolean) {
+  if (isLast && a !== b) throw new Error("First concat invalid")
+  const digits = countDigits(b)
+  const value = (a - b) / Math.pow(10, digits)
+  if (Number.isInteger(value)) return value
+  throw new Error("Not concatable")
 }
 
-function roundUpToPowerOfTen(num: number) {
-  if (num <= 0) return 0
-  const log10 = Math.log10(num)
-  const power = Math.ceil(log10)
-  const potentialResult = Math.pow(10, power)
-  return potentialResult === num ? num * 10 : potentialResult
+function countDigits(num: number): number {
+  if (num === 0) return 1
+  return Math.floor(Math.log10(Math.abs(num))) + 1
 }

@@ -9,4 +9,10 @@ describe("test", async () => {
   it("runs part2", async () => {
     expect(part2()).toEqual(354060705047464)
   })
+
+  describe("unit tests", () => {
+    it("works for a single concat", () => {
+      expect(part2(`123: 12 3`)).toEqual(123)
+    })
+  })
 })
