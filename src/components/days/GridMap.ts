@@ -84,10 +84,7 @@ export class GridMap {
         break
     }
 
-    if (!this.validateMovement({ x: newX, y: newY })) {
-      // console.log(`turning ${direction}`, this.position);
-      return
-    }
+    if (!this.validateMovement({ x: newX, y: newY })) return
 
     if (newX < 0 || newX >= this.width || newY < 0 || newY >= this.height) {
       return this.onOutOfBoundsCallbacks.forEach((cb) => cb(this))
