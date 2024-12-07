@@ -28,5 +28,5 @@ describe("test", async () => {
 
   it("runs part2", async () => {
     expect(part2()).toEqual(2162)
-  }, 1000)
-}, 1000)
+  })
+})
