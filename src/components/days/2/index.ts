@@ -1,4 +1,4 @@
-import input from "../inputs/2.txt?raw"
+import input from "./input.txt?raw"
 
 export function part1() {
   const reports = input

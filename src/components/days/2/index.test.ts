@@ -1,4 +1,4 @@
-import { part1, part2 } from "../2"
+import { part1, part2 } from "."
 import { describe, it, expect } from "vitest"
 
 describe("test", () => {

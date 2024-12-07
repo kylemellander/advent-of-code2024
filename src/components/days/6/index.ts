@@ -1,5 +1,5 @@
-import input from "../inputs/6.txt?raw"
-import { Direction } from "./GridMap"
+import input from "./input.txt?raw"
+import { Direction } from "../GridMap"
 
 export function part1(data = input) {
   const { positionsVisited } = part1DataPoints(data)

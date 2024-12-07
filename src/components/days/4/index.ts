@@ -1,4 +1,4 @@
-import input from "../inputs/4.txt?raw"
+import input from "./input.txt?raw"
 
 export function part1() {
   const grid = input

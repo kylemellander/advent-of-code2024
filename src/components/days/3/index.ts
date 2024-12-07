@@ -1,4 +1,4 @@
-import input from "../inputs/3.txt?raw"
+import input from "./input.txt?raw"
 
 export function part1(data = input) {
   const line = data.replace("\n", "")

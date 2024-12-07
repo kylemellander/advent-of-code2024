@@ -1,4 +1,4 @@
-import input from "../inputs/1.txt?raw"
+import input from "./input.txt?raw"
 
 type Lists = [number[], number[]]
 
