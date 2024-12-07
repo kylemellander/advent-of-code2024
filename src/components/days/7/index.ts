@@ -50,12 +50,8 @@ function findValidEquationsReversed(
       const newValues: number[] = []
       for (const value of values) {
         for (const operator of allowedOperators) {
-          try {
-            const newValue = operator(value, number, i === 0)
-            newValues.push(newValue)
-          } catch {
-            // Ignore errors
-          }
+          const newValue = operator(value, number, i === 0)
+          if (newValue >= 0) newValues.push(newValue)
         }
       }
       values = newValues
@@ -73,24 +69,24 @@ function scoreEquations(equations: Equation[]) {
 
 function addReversed(a: number, b: number, isLast: boolean) {
   const result = a - b
-  if (result < 0) throw new Error("Would be too large")
-  if (isLast && result !== 0) throw new Error("Not zero")
+  if (result < 0) return -1
+  if (isLast && result !== 0) return -1
   return result
 }
 
 function multiplyReversed(a: number, b: number, isLast: boolean) {
-  if (isLast && a !== b) throw new Error("Not down to one")
-  if (a % b !== 0) throw new Error("Not a multiple")
+  if (isLast && a !== b) return -1
+  if (a % b !== 0) return -1
 
   return a / b
 }
 
 function concatReversed(a: number, b: number, isLast: boolean) {
-  if (isLast && a !== b) throw new Error("First concat invalid")
+  if (isLast && a !== b) return -1
   const digits = countDigits(b)
   const value = (a - b) / Math.pow(10, digits)
   if (Number.isInteger(value)) return value
-  throw new Error("Not concatable")
+  return -1
 }
 
 function countDigits(num: number): number {
