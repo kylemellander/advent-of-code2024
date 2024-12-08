@@ -6,6 +6,7 @@ import * as day4 from "./days/4"
 import * as day5 from "./days/5"
 import * as day6 from "./days/6"
 import * as day7 from "./days/7"
+import * as day8 from "./days/8"
 import { useState } from "react"
 
 const map = {
@@ -16,6 +17,7 @@ const map = {
   5: day5,
   6: day6,
   7: day7,
+  8: day8,
 }
 
 export function PartResults({ part }: { part: 1 | 2 }) {
