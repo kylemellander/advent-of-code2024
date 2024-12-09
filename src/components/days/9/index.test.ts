@@ -18,7 +18,7 @@ describe("test", async () => {
     expect(part1()).toEqual(6349606724455)
   })
 
-  it.skip("runs part2", async () => {
-    expect(part2()).toEqual(1333)
+  it("runs part2", async () => {
+    expect(part2()).toEqual(6376648986651)
   })
 })
