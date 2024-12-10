@@ -1,13 +1,14 @@
 import { useCurrentDay } from "./useCurrentDay"
-import * as day1 from "./days/1"
-import * as day2 from "./days/2"
-import * as day3 from "./days/3"
-import * as day4 from "./days/4"
-import * as day5 from "./days/5"
-import * as day6 from "./days/6"
-import * as day7 from "./days/7"
-import * as day8 from "./days/8"
-import * as day9 from "./days/9"
+import * as day1 from "../days/1"
+import * as day2 from "../days/2"
+import * as day3 from "../days/3"
+import * as day4 from "../days/4"
+import * as day5 from "../days/5"
+import * as day6 from "../days/6"
+import * as day7 from "../days/7"
+import * as day8 from "../days/8"
+import * as day9 from "../days/9"
+import * as day10 from "../days/10"
 import { useState } from "react"
 
 const map = {
@@ -20,6 +21,7 @@ const map = {
   7: day7,
   8: day8,
   9: day9,
+  10: day10,
 }
 
 export function PartResults({ part }: { part: 1 | 2 }) {
