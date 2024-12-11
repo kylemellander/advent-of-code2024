@@ -9,6 +9,7 @@ import * as day7 from "../days/7"
 import * as day8 from "../days/8"
 import * as day9 from "../days/9"
 import * as day10 from "../days/10"
+import * as day11 from "../days/11"
 import { useState } from "react"
 
 const map = {
@@ -22,6 +23,7 @@ const map = {
   8: day8,
   9: day9,
   10: day10,
+  11: day11,
 }
 
 export function PartResults({ part }: { part: 1 | 2 }) {
@@ -39,7 +41,8 @@ function Results({ fn }: { fn: () => string | number }) {
 
   return (
     <div>
-      <b>{result}</b> ({length.toFixed(2)}ms)
+      <b>{result}</b> ({length.toFixed(2)}
+      ms)
     </div>
   )
 }
