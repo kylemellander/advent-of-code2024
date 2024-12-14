@@ -53,7 +53,7 @@ export function PartResults({ part }: { part: 1 | 2 }) {
     const Visual = map[day].Visual as () => JSX.Element
     return (
       <>
-        {/* <Results fn={partFunction} /> */}
+        <Results fn={partFunction} />
         <Visual />
       </>
     )

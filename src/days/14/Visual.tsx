@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import input from "./input.txt?raw"
 import { Robot } from "./types"
 import { draw, run } from "./shared"
+import { part2 } from "./part2"
 
 const data: string = input
 const width: number = 101
@@ -25,8 +26,10 @@ const robots: Robot[] = data
     }
   })
 
+const correct = part2(data)
+
 export function Visual() {
-  const [seconds, setSeconds] = useState<number>(0)
+  const [seconds, setSeconds] = useState<number>(correct)
   const [play, setPlay] = useState<boolean>(false)
 
   const result = draw(run({ seconds, robots, height, width }), {
@@ -51,9 +54,10 @@ export function Visual() {
   return (
     <div
       style={{
+        width: "500px",
         fontSize: "8px",
         lineHeight: "5px",
-        ...(seconds === 7861 ? { color: "green" } : {}),
+        ...(seconds === correct ? { color: "green" } : {}),
       }}
     >
       <pre>{result}</pre>
