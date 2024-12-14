@@ -12,9 +12,17 @@ import * as day10 from "../days/10"
 import * as day11 from "../days/11"
 import * as day12 from "../days/12"
 import * as day13 from "../days/13"
+import * as day14 from "../days/14"
 import { useState } from "react"
 
-const map = {
+const map: Record<
+  string,
+  {
+    part1: () => string | number
+    part2: () => string | number
+    Visual?: () => JSX.Element
+  }
+> = {
   1: day1,
   2: day2,
   3: day3,
@@ -28,15 +36,28 @@ const map = {
   11: day11,
   12: day12,
   13: day13,
+  14: day14,
 }
 
 export function PartResults({ part }: { part: 1 | 2 }) {
   const partFunction = usePartFunction(part)
 
+  const day = useCurrentDay()
+
   const [run, setRun] = useState(false)
 
   if (!partFunction) return <div>Part not implemented yet</div>
   if (!run) return <button onClick={() => setRun(true)}>Run</button>
+
+  if (day && part === 2 && map[day].Visual) {
+    const Visual = map[day].Visual as () => JSX.Element
+    return (
+      <>
+        {/* <Results fn={partFunction} /> */}
+        <Visual />
+      </>
+    )
+  }
   return <Results fn={partFunction} />
 }
 
@@ -61,7 +82,7 @@ function benchmarkFunction(fn: () => string | number) {
 const usePartFunction = (part: 1 | 2) => {
   const day = useCurrentDay()
   if (!day) return
-  const data = map[day as keyof typeof map]
+  const data = map[day]
 
   if (!data) return
 
