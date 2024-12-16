@@ -23,7 +23,7 @@ export function part2(data = input) {
     "<": -1,
   }
 
-  console.log(joinGroupsOfN(grid, width).join("\n"))
+  // console.log(joinGroupsOfN(grid, width).join("\n"))
 
   const gridState = [...grid]
   let robotLocation = grid.indexOf("@")
@@ -128,7 +128,7 @@ export function part2(data = input) {
     }
   }
 
-  console.log(joinGroupsOfN(gridState, width).join("\n"))
+  // console.log(joinGroupsOfN(gridState, width).join("\n"))
 
   let sumOfCoordinatesOfBoxes = 0
   for (let i = 0; i < gridState.length; i++) {
