@@ -4,9 +4,11 @@ type PriorityQueue<T> = {
   enqueue(item: T, priority: number): void
   dequeue(): T | undefined
   isEmpty(): boolean
+  length: number
+  elements: T[]
 }
 
-function createPriorityQueue<T>(): PriorityQueue<T> {
+export function createPriorityQueue<T>(): PriorityQueue<T> {
   const elements: { item: T; priority: number }[] = []
 
   function swap(i: number, j: number) {
@@ -65,6 +67,12 @@ function createPriorityQueue<T>(): PriorityQueue<T> {
     },
     isEmpty() {
       return elements.length === 0
+    },
+    get length() {
+      return elements.length
+    },
+    get elements() {
+      return elements.map(({ item }) => item)
     },
   }
 }
