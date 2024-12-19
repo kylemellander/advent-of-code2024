@@ -35,4 +35,5 @@ export function part2(
       return `${coord % width},${Math.floor(coord / width)}`
     }
   }
+  return ""
 }
