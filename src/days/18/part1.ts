@@ -18,15 +18,16 @@ export function part1(
     .map(([x, y]) => x + y * width)
   const coordSet = new Set(coords)
 
-  let result = ""
-  for (let i = 0; i < height * width; i++) {
-    if (i % width === 0) result += "\n"
-    if (coordSet.has(i)) result += "#"
-    else result += "."
-  }
-  console.log(result)
+  // let result = ""
+  // for (let i = 0; i < height * width; i++) {
+  //   if (i % width === 0) result += "\n"
+  //   if (coordSet.has(i)) result += "#"
+  //   else result += "."
+  // }
+  // console.log(result)
 
   return findPaths(coordSet, width, height, 0, height * width - 1)
+    .shortestPathScore
 }
 
 export function findPaths(
@@ -35,6 +36,7 @@ export function findPaths(
   height: number,
   start: number,
   end: number
+  // limit: number = Infinity
 ) {
   const offsets = [-width, 1, width, -1]
   const queue = createPriorityQueue<{ loc: number; score: number }>()
@@ -45,8 +47,9 @@ export function findPaths(
 
   while (!queue.isEmpty()) {
     const { loc, score } = queue.dequeue()!
-    if (queue.length % 100 === 0)
-      console.log(queue.length, loc, score, visitedNodes[loc])
+    // if (score > limit) continue
+    // if (queue.length % 100 === 0)
+    //   console.log(queue.length, loc, score, visitedNodes[loc])
     if (loc === end) {
       shortestPathScore = Math.min(shortestPathScore, score)
       continue
@@ -67,5 +70,5 @@ export function findPaths(
     }
   }
 
-  return shortestPathScore
+  return { visitedNodes, shortestPathScore }
 }

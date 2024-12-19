@@ -8,16 +8,16 @@ describe("test", async () => {
       expect(part1(example, { height: 7, width: 7, bytes: 12 })).toEqual(22)
     })
 
-    it.skip("runs part2", async () => {
-      expect(part2()).toEqual(117440n)
+    it("runs part2", async () => {
+      expect(part2(example, { height: 7, width: 7, bytes: 12 })).toEqual("6,1")
     })
   })
 
   it("runs part1", () => {
-    expect(part1()).toEqual("6,7,5,2,1,3,5,1,7")
+    expect(part1()).toEqual(246)
   })
 
-  it.skip("runs part2", async () => {
-    expect(part2()).toEqual(216549846240877n)
+  it("runs part2", async () => {
+    expect(part2()).toEqual("22,50")
   })
 })
