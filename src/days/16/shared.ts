@@ -1,4 +1,9 @@
-type QueueItem = { loc: number; path: number[]; dir: number; score: number }
+export type QueueItem = {
+  loc: number
+  path: number[]
+  dir: number
+  score: number
+}
 
 type PriorityQueue<T> = {
   enqueue(item: T, priority: number): void
