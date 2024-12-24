@@ -19,6 +19,9 @@ import * as day17 from "../days/17"
 import * as day18 from "../days/18"
 import * as day19 from "../days/19"
 import * as day20 from "../days/20"
+import * as day21 from "../days/21"
+import * as day22 from "../days/22"
+import * as day23 from "../days/23"
 import { useState } from "react"
 
 const map: Record<
@@ -49,6 +52,9 @@ const map: Record<
   18: day18,
   19: day19,
   20: day20,
+  21: day21,
+  22: day22,
+  23: day23,
 }
 
 export function PartResults({ part }: { part: 1 | 2 }) {
