@@ -1,7 +1,7 @@
 import { part1, part2 } from "./"
 import { describe, it, expect } from "vitest"
 import example from "./example.txt?raw"
-import input from "./input.txt?raw"
+// import input from "./input.txt?raw"
 
 describe("test", async () => {
   describe("example", () => {
