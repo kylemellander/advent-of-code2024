@@ -1,4 +1,4 @@
-import { joinGroupsOfN } from "../../../days/8"
+import { joinGroupsOfN } from "../../../2024/days/8"
 import input from "./input.txt?raw"
 
 export function part1(data = input) {
