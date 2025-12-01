@@ -3,10 +3,10 @@ import { describe, it, expect } from "vitest"
 
 describe("test", () => {
   it("runs part1", () => {
-    expect(part1()).toEqual(2430334)
+    expect(part1()).toEqual(1139)
   })
 
   it("runs part2", () => {
-    expect(part2()).toEqual(28786472)
+    expect(part2()).toEqual(6684)
   })
 })
