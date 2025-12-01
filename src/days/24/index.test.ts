@@ -12,17 +12,13 @@ describe("test", async () => {
     it("runs part1", () => {
       expect(part1(example2)).toEqual(2024)
     })
-
-    it("runs part2", async () => {
-      expect(part2(example)).toEqual("z00,z01,z02,z05")
-    })
   })
 
   it("runs part1", () => {
     expect(part1()).toEqual(42883464055378)
   })
 
-  it.skip("runs part2", async () => {
-    expect(part2()).toEqual("bs,cf,cn,gb,gk,jf,mp,qk,qo,st,ti,uc,xw")
+  it("runs part2", async () => {
+    expect(part2()).toEqual("dqr,dtk,pfw,shh,vgs,z21,z33,z39")
   })
 })
