@@ -80,21 +80,21 @@ export function Visual() {
         style={{
           fontFamily: "monospace",
           fontSize: "11px",
+          lineHeight: "0.75em",
+          margin: 0,
         }}
       >
         {display.split("").map((char, i) => {
+          const isChanged = char !== previousDisplay[i]
           return (
             <span
               key={i}
               style={{
                 color: getColor(char, previousDisplay[i]),
-                fontWeight:
-                  char === "*" && previousDisplay[i] !== "*"
-                    ? "bold"
-                    : "normal",
+                fontWeight: char === "*" && isChanged ? "bold" : "normal",
               }}
             >
-              {char}
+              {char === "*" && !isChanged ? "." : char}
             </span>
           )
         })}
