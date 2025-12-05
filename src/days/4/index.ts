@@ -5,16 +5,7 @@ export function part1(data: string = input) {
   const lines = data.split("\n").filter(Boolean)
   const width = lines[0].length
   const grid = lines.join("")
-  const borderOffsets = getBorderOffsets(width)
-  const borderOffsetsKeys = Object.keys(
-    borderOffsets
-  ) as (keyof typeof borderOffsets)[]
-
-  const findOffset = (i: number, direction: keyof typeof borderOffsets) => {
-    if (direction.includes("l") && i % width === 0) return undefined
-    if (direction.includes("r") && i % width === width - 1) return undefined
-    return grid[borderOffsets[direction] + i]
-  }
+  const borderOffsetsKeys = ["ul", "u", "ur", "l", "r", "dl", "d", "dr"]
 
   const gridAccessibles: number[] = []
   for (let i = 0; i < grid.length; i++) {
@@ -24,7 +15,12 @@ export function part1(data: string = input) {
     let j = 0
 
     while (surroundingCount < 4 && j < borderOffsetsKeys.length) {
-      if (findOffset(i, borderOffsetsKeys[j]) === "@") {
+      const coord = findOffsetCoord({
+        index: i,
+        direction: borderOffsetsKeys[j],
+        width,
+      })
+      if (grid[coord as keyof typeof grid] === "@") {
         surroundingCount++
       }
       j++
@@ -95,4 +91,29 @@ function getBorderOffsets(width: number) {
     d: width,
     dr: width + 1,
   }
+}
+
+export function findOffsetCoord({
+  index,
+  direction,
+  width,
+  directions = {
+    ul: -1 * width - 1,
+    u: -1 * width,
+    ur: -1 * width + 1,
+    l: -1,
+    r: 1,
+    dl: width - 1,
+    d: width,
+    dr: width + 1,
+  },
+}: {
+  index: number
+  direction: string
+  directions?: Record<string, number>
+  width: number
+}) {
+  if (direction.includes("l") && index % width === 0) return undefined
+  if (direction.includes("r") && index % width === width - 1) return undefined
+  return directions[direction] + index
 }
