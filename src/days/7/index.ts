@@ -1,5 +1,7 @@
 import input from "./input.txt?raw"
 
+export { Visual } from "./Visual"
+
 export function part1(data: string = input) {
   const lines = data.split("\n").filter(Boolean)
   const width = lines[0].length
