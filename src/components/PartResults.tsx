@@ -4,7 +4,7 @@ import * as day2 from "../days/2"
 import * as day3 from "../days/3"
 import * as day4 from "../days/4"
 import * as day5 from "../days/5"
-// import * as day6 from "../days/6"
+import * as day6 from "../days/6"
 // import * as day7 from "../days/7"
 // import * as day8 from "../days/8"
 // import * as day9 from "../days/9"
@@ -38,7 +38,7 @@ const map: Record<
   3: day3,
   4: day4,
   5: day5,
-  // 6: day6,
+  6: day6,
   // 7: day7,
   // 8: day8,
   // 9: day9,
