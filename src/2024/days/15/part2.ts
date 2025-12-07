@@ -1,4 +1,3 @@
-import { joinGroupsOfN } from "../8"
 import input from "./input.txt?raw"
 
 export function part2(data = input) {
@@ -147,7 +146,7 @@ function findBoxesPushed(
   indexes: number[],
   offset: number
 ) {
-  const indexesOfBoxesPushed = []
+  const indexesOfBoxesPushed: number[] = []
   let hitWall = false
   for (const index of indexes) {
     if (gridState[index + offset] === "]") {

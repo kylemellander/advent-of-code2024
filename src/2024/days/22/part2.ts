@@ -13,8 +13,8 @@ export function part2(data: string = input) {
 }
 
 function findOptimalPrice(histories: number[][]) {
-  const expandedHistories = histories.map((history, i) => {
-    return expandHistory(history, i)
+  const expandedHistories = histories.map((history) => {
+    return expandHistory(history)
   })
   const possibleKeys: Record<string, number> = {}
 
@@ -39,7 +39,7 @@ function findOptimalPrice(histories: number[][]) {
   )
 }
 
-function expandHistory(history: number[], j: number) {
+function expandHistory(history: number[]) {
   const expanded = []
   for (let i = 0; i < history.length; i++) {
     const current = history[i]

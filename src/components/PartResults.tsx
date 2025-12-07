@@ -81,18 +81,18 @@ export function PartResults({ part }: { part: 1 | 2 }) {
   return <Results fn={partFunction} />
 }
 
-function Results({ fn }: { fn: () => string | number }) {
+function Results({ fn }: { fn: () => string | number | bigint }) {
   const { result, length } = benchmarkFunction(fn)
 
   return (
     <div>
-      <b>{result}</b> ({length.toFixed(2)}
+      <b>{result.toString()}</b> ({length.toFixed(2)}
       ms)
     </div>
   )
 }
 
-function benchmarkFunction(fn: () => string | number) {
+function benchmarkFunction(fn: () => string | number | bigint) {
   const start = performance.now()
   const result = fn()
   const end = performance.now()
