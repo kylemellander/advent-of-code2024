@@ -1,6 +1,9 @@
-// import input from "./input.txt?raw"
+import input from "./input.txt?raw"
 
+export function part1(data: string = input) {
+  console.log(data)
+}
 
-export function part1(data = input) {
-
+export function part2(data: string = input) {
+  console.log(data)
 }

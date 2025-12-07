@@ -1,23 +1,24 @@
-import { part1, part2 } from "./"
+import { part1, part2 } from "."
 import { describe, it, expect } from "vitest"
-import example from "./example.txt?raw"
 
 describe("test", async () => {
   describe("example", () => {
+    const testInput = ``
+
     it("runs part1", () => {
-      expect(part1(example)).toEqual(1930)
+      expect(part1(testInput)).toEqual(undefined)
     })
 
-    it("runs part2", () => {
-      expect(part2(example)).toEqual(1206)
+    it("runs part2", async () => {
+      expect(part2(testInput)).toEqual(undefined)
     })
   })
 
-  it("runs part1", () => {
-    expect(part1()).toEqual(1488414)
+  it.skip("runs part1", () => {
+    expect(part1()).toEqual(undefined)
   })
 
-  it("runs part2", async () => {
-    expect(part2()).toEqual(911750)
+  it.skip("runs part2", async () => {
+    expect(part2()).toEqual(undefined)
   })
 })

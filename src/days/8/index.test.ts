@@ -3,33 +3,22 @@ import { describe, it, expect } from "vitest"
 
 describe("test", async () => {
   describe("example", () => {
-    const testInput = `............
-........0...
-.....0......
-.......0....
-....0.......
-......A.....
-............
-............
-........A...
-.........A..
-............
-............`
+    const testInput = ``
 
     it("runs part1", () => {
-      expect(part1(testInput)).toEqual(14)
+      expect(part1(testInput)).toEqual(undefined)
     })
 
     it("runs part2", async () => {
-      expect(part2(testInput)).toEqual(34)
+      expect(part2(testInput)).toEqual(undefined)
     })
   })
 
-  it("runs part1", () => {
-    expect(part1()).toEqual(398)
+  it.skip("runs part1", () => {
+    expect(part1()).toEqual(undefined)
   })
 
-  it("runs part2", async () => {
-    expect(part2()).toEqual(1333)
+  it.skip("runs part2", async () => {
+    expect(part2()).toEqual(undefined)
   })
 })
