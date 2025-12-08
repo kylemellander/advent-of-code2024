@@ -12,7 +12,7 @@ export function part1(data: string = input, connections = 1000) {
     const [x1, y1, z1] = lines[i]
     for (let j = i + 1; j < lines.length; j++) {
       const [x2, y2, z2] = lines[j]
-      const dist = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2)
+      const dist = (x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2
       shortestConnections.push({ a: i, b: j, dist })
     }
   }
@@ -43,7 +43,7 @@ export function part2(data: string = input, connections: number = 1000) {
     const [x1, y1, z1] = lines[i]
     for (let j = i + 1; j < lines.length; j++) {
       const [x2, y2, z2] = lines[j]
-      const dist = Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2)
+      const dist = (x1 - x2) ** 2 + (y1 - y2) ** 2 + (z1 - z2) ** 2
       shortestConnections.push({ a: i, b: j, dist })
     }
   }
