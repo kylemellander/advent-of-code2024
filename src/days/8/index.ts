@@ -76,6 +76,14 @@ function findCircuits(
   connections: { a: number; b: number; dist: number }[],
   length: number
 ) {
+  const connectionMemo = new Map<number, Set<number>>()
+  for (const { a, b } of connections) {
+    if (!connectionMemo.has(a)) connectionMemo.set(a, new Set())
+    if (!connectionMemo.has(b)) connectionMemo.set(b, new Set())
+    connectionMemo.get(a)!.add(b)
+    connectionMemo.get(b)!.add(a)
+  }
+
   const circuits = []
   const visited = new Set<number>()
 
@@ -83,23 +91,22 @@ function findCircuits(
     if (visited.has(i)) continue
 
     const queue: number[] = [i]
-    const junctionsInCircuit = [i]
+    const junctionsInCircuit = new Set<number>([i])
     while (queue.length > 0) {
       const current = queue.shift()!
-      const connectionsConnected = connections.filter(
-        (c) => c.a === current || c.b === current
-      )
-      connectionsConnected.forEach((c) => {
-        const otherJunction = c.a === current ? c.b : c.a
-        if (!junctionsInCircuit.includes(otherJunction)) {
-          junctionsInCircuit.push(otherJunction)
-          queue.push(otherJunction)
+      const connectedJunctions = connectionMemo.get(current)
+      if (!connectedJunctions) continue
+      for (const connectedJunction of connectedJunctions) {
+        if (!visited.has(connectedJunction)) {
+          visited.add(connectedJunction)
+          if (!junctionsInCircuit.has(connectedJunction))
+            junctionsInCircuit.add(connectedJunction)
+          queue.push(connectedJunction)
         }
-      })
+      }
     }
 
-    circuits.push(junctionsInCircuit)
-    junctionsInCircuit.forEach((j) => visited.add(j))
+    circuits.push(Array.from(junctionsInCircuit))
   }
 
   return circuits
