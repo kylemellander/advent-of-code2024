@@ -78,10 +78,10 @@ function findCircuits(
   length: number
 ) {
   const circuits = []
-  const unusedJunctions = new Set(Array.from(Array(length).keys()))
+  const visited = new Set<number>()
 
   for (let i = 0; i < length; i++) {
-    if (!unusedJunctions.has(i)) continue
+    if (visited.has(i)) continue
 
     const junctionsInCircuit = [i]
     let hasChanges = true
@@ -103,7 +103,7 @@ function findCircuits(
     }
 
     circuits.push(junctionsInCircuit)
-    junctionsInCircuit.forEach((j) => unusedJunctions.delete(j))
+    junctionsInCircuit.forEach((j) => visited.add(j))
   }
 
   return circuits
