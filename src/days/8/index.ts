@@ -23,7 +23,6 @@ export function part1(data: string = input, connections = 1000) {
   }
 
   const circuits = findCircuits(shortestConnections, lines.length)
-  // console.log({ shortestConnections, circuits })
   return circuits
     .sort((a, b) => b.length - a.length)
     .slice(0, 3)
@@ -83,23 +82,20 @@ function findCircuits(
   for (let i = 0; i < length; i++) {
     if (visited.has(i)) continue
 
+    const queue: number[] = [i]
     const junctionsInCircuit = [i]
-    let hasChanges = true
-    while (hasChanges) {
-      hasChanges = false
-      for (let j = 0; j < length; j++) {
-        if (junctionsInCircuit.includes(j)) continue
-
-        const isConnected = connections.some(
-          (c) =>
-            (junctionsInCircuit.includes(c.a) && c.b === j) ||
-            (junctionsInCircuit.includes(c.b) && c.a === j)
-        )
-        if (isConnected) {
-          junctionsInCircuit.push(j)
-          hasChanges = true
+    while (queue.length > 0) {
+      const current = queue.shift()!
+      const connectionsConnected = connections.filter(
+        (c) => c.a === current || c.b === current
+      )
+      connectionsConnected.forEach((c) => {
+        const otherJunction = c.a === current ? c.b : c.a
+        if (!junctionsInCircuit.includes(otherJunction)) {
+          junctionsInCircuit.push(otherJunction)
+          queue.push(otherJunction)
         }
-      }
+      })
     }
 
     circuits.push(junctionsInCircuit)
