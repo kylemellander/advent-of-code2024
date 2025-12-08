@@ -33,7 +33,7 @@ describe("test", async () => {
     })
   })
 
-  it.skip("runs part1", () => {
+  it("runs part1", () => {
     expect(part1()).toEqual(117000)
   })
 
